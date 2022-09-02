@@ -1,0 +1,45 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.1.1",
+    "@fortawesome/free-brands-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@googlemaps/js-api-loader": "^1.14.3",
+    "@nuxtjs/auth-next": "^5.0.0-1648802546.c9880dc",
+    "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/firebase": "^8.2.2",
+    "@nuxtjs/fontawesome": "^1.1.2",
+    "@revolist/vue-datagrid": "^3.1.6",
+    "ag-grid-community": "^27.3.0",
+    "ag-grid-vue": "^27.3.0",
+    "ag-grid-vue3": "^27.3.0",
+    "axios": "^0.27.2",
+    "bootstrap": "^5.1.3",
+    "core-js": "^3.15.1",
+    "firebase": "^9.8.3",
+    "mapbox-gl": "^2.9.2",
+    "nuxt": "^2.15.7",
+    "nuxt-gmaps": "^1.2.10",
+    "nuxt-leaflet": "^0.0.27",
+    "vue-browser-geolocation": "^1.8.0",
+    "vue-debounce": "^4.0.0",
+    "vue-iframes": "^0.0.19",
+    "vue-number-animation": "^1.1.2",
+    "vue-scrollin": "^0.1.2",
+    "vue-typed-js": "^0.1.2",
+    "vue3-gmap-custom-marker": "^0.0.5",
+    "vuetify": "^2.6.9"
+  },
+  "devDependencies": {
+    "@nuxt/image": "^0.6.2",
+    "@nuxtjs/vuetify": "^1.12.3"
+  }
+}
