@@ -134,6 +134,7 @@ import time
 def connect(client, flags, rc, properties):
     mqtt.client.subscribe("/mqtt") #subscribing mqtt topic
     mqtt.client.subscribe("/mqtt2") #subscribing mqtt topic
+    mqtt.client.subscribe("/mqtt3") #subscribing mqtt topic
     print("Connected: ", client, flags, rc, properties)
 
 
@@ -154,7 +155,7 @@ def publish():
         # msg = f"messages: {msg_count}"
         # result = client.publish(topic, msg)
     mqtt.publish("/mqtt",data) 
-    db.child("HealthData/").push(round(data,0))
+    db.child("HealthData/").child("HeartRate/").push(round(data,0))
     topic = "mqtt"
     return {"data":data, "topic":topic}
 
@@ -165,14 +166,22 @@ def publish2():
         # msg = f"messages: {msg_count}"
         # result = client.publish(topic, msg)
     mqtt.publish("/mqtt2",data) 
-    db.child("HealthData/").push(round(data,0))
+    db.child("HealthData/").child("BloodPressure").push(round(data,0))
     topic = "mqtt2"
     return {"data":data, "topic":topic}
-        # db.child("HealthData/").push(10)
-        # db.child("HealthData/").push(13)
-        # db.child("HealthData/").push(100)
-        # db.child("HealthData/").push(14)
-        # db.child("HealthData/").push(15)
+
+def publish3():
+    print("PUBLISH3")
+    # msg_count = 0
+    data = random.gauss(17,2.0)
+        # msg = f"messages: {msg_count}"
+        # result = client.publish(topic, msg)
+    mqtt.publish("/mqtt3",data) 
+    db.child("HealthData/").child("Acceleration").push(round(data,0))
+    topic = "mqtt3"
+    return {"data":data, "topic":topic}
+
+# def collectData():
 
 
 
@@ -213,19 +222,23 @@ def publish2():
 @app.websocket("/bpm")
 async def websocket_endpoint(websocket:WebSocket):
   await websocket.accept()
- 
+#   stop = (await websocket.receive_json())["stop"] #important to await the right thing () otherwise we get error "TypeError: 'coroutine' object is not subscriptable"
   while True:
-    
 
     data = publish()
-    print("data",data)
     await websocket.send_json({"value":round(data["data"],0),
-                               "topic":data["topic"]})
+                                    "topic":data["topic"]})
     data2 = publish2()
     # data2 = publish()
     # for data in health_data_db.each():
     await websocket.send_json({"value":round(data2["data"],0),
-                               "topic":data2["topic"]})
+                                "topic":data2["topic"]})
+
+    data3 = publish3()
+    # data2 = publish()
+    # for data in health_data_db.each():
+    await websocket.send_json({"value":round(data3["data"],0),
+                                "topic":data3["topic"]})
 
     # 
     #     print(data.val())
