@@ -462,6 +462,12 @@ export default {
       this.connection.onmessage = (event) => {
         // https://github.com/apexcharts/vue-apexcharts
         // console.log(event)
+        console.log(JSON.parse(event.data)["topic"])
+        console.log(JSON.parse(event.data)["value"])
+        if (JSON.parse(event.data)["topic"] == "testseth") {
+          console.log("FRÅN MOBIL")
+          a.mobileData = JSON.parse(event.data)["value"];
+        }
         if (JSON.parse(event.data)["topic"] == "/mqtt") {
           a.today = new Date();
 
@@ -508,13 +514,9 @@ export default {
           // ]
 
           // && a.blood_pressure_data > 10 && a.acceleration_data > 17
-          if (
-            a.BPM_data > 300
-          
-          ) {
-          // if (a.BPM_data > 120 &&
-          //   a.blood_pressure_data > 9 &&
-          //   a.acceleration_data > 15) {
+          if (a.BPM_data > 120 &&
+            a.blood_pressure_data > 9 &&
+            a.acceleration_data > 15) {
             a.fallDetected = true;
             a.options = {
             ...a.options,
@@ -537,7 +539,7 @@ export default {
           }
         }
         // else if(JSON.parse(event.data)["topic"] == "mqtt2" && this.bb == true){
-        else if (JSON.parse(event.data)["topic"] == "/mqtt2") {
+        else if (JSON.parse(event.data)["topic"] == "mqtt2") {
           a.blood_pressure_data = JSON.parse(event.data)["value"];
 
           a.today1 = new Date();
@@ -578,14 +580,10 @@ export default {
             },
           ];
 
-          // if (
-          //   a.BPM_data > 120 &&
-          //   a.blood_pressure_data > 9 &&
-          //   a.acceleration_data > 15
-          // ) {
-            if (
-            a.BPM_data > 300
-          
+          if (
+            a.BPM_data > 120 &&
+            a.blood_pressure_data > 9 &&
+            a.acceleration_data > 15
           ) {
             a.fallDetected = true;
             a.options = {
@@ -610,7 +608,7 @@ export default {
         }
 
         // else if(JSON.parse(event.data)["topic"] == "mqtt3" && this.cc == true){
-        else if (JSON.parse(event.data)["topic"] == "/mqtt3") {
+        else if (JSON.parse(event.data)["topic"] == "mqtt3") {
           a.acceleration_data = JSON.parse(event.data)["value"];
 
           a.today2 = new Date();
@@ -649,14 +647,10 @@ export default {
             },
           ];
 
-          // if (
-          //   a.BPM_data > 120 &&
-          //   a.blood_pressure_data > 9 &&
-          //   a.acceleration_data > 15
-          // ) {
           if (
-            a.BPM_data > 300
-          
+            a.BPM_data > 120 &&
+            a.blood_pressure_data > 9 &&
+            a.acceleration_data > 15
           ) {
             a.fallDetected = true;
             a.options = {

@@ -52,6 +52,7 @@ mqtt = FastMQTT(
 
 mqtt.init_app(app)
 
+
 import json
 import asyncio
 from fastapi import FastAPI
@@ -92,21 +93,6 @@ db = firebase.database()
 # app = FastAPI()
 
 
-@app.get("/")
-async def func():
-    # client = connect_mqtt()
-    # client.loop_start()
-    
-    # subscribe(client)
-    # publish(client)
-    # while True:
-    for i in range(50):
-    
-        mqtt.publish("/mqtt2","2") 
-        mqtt.publish("/mqtt","1") 
-        time.sleep(1)
-   
-
     
     # return {"result": True,"message":"Published" }
 #     # for i in range(10):
@@ -133,19 +119,29 @@ import time
 @mqtt.on_connect()
 def connect(client, flags, rc, properties):
     mqtt.client.subscribe("/mqtt") #subscribing mqtt topic
+    print("Connected: ", client, flags, rc, properties)
     mqtt.client.subscribe("/mqtt2") #subscribing mqtt topic
+    print("Connected: ", client, flags, rc, properties)
     mqtt.client.subscribe("/mqtt3") #subscribing mqtt topic
+    print("Connected: ", client, flags, rc, properties)
+    mqtt.client.subscribe("/testseth") #subscribing mqtt topic
     print("Connected: ", client, flags, rc, properties)
 
 
-@mqtt.on_message()
-def message(client, topic, payload, qos, properties):
-    print("Received message: ",topic, payload.decode(), qos, properties)
+
 
     
 @mqtt.on_subscribe()
 def subscribe(client, mid, qos, properties):
     print("subscribed", client, mid, qos, properties)
+
+
+
+@app.get("/bajs")
+async def func():
+    mqtt.publish("/mqtt", 1000) #publishing mqtt topic
+
+    return {"result": True,"message":"Published" }
 
 
 def publish():
@@ -190,9 +186,7 @@ def publish3():
 #     print("Connected to: ", client, flags, rc, properties)
 
 
-# @mqtt.on_message()
-# async def message(client, topic, payload, qos, properties):
-#     print("Received message: ",topic, payload.decode(), qos, properties)
+
 
 # @mqtt.on_message()
 # async def message(client, topic, payload, qos, properties):
@@ -213,37 +207,55 @@ def publish3():
 
 #     client.subscribe(topic)
 #     client.on_message = on_message
-        
-
-
 
 # @mqtt.on_message()
-# @mqtt.on_message()
+# async def message(client, topic, payload, qos, properties):
+#     print("Received message: ",topic, payload.decode(), qos, properties)
+
+
+
 @app.websocket("/bpm")
 async def websocket_endpoint(websocket:WebSocket):
-  await websocket.accept()
-#   stop = (await websocket.receive_json())["stop"] #important to await the right thing () otherwise we get error "TypeError: 'coroutine' object is not subscriptable"
-  while True:
 
-    data = publish()
-    await websocket.send_json({"value":round(data["data"],0),
-                                    "topic":data["topic"]})
-    data2 = publish2()
-    # data2 = publish()
-    # for data in health_data_db.each():
-    await websocket.send_json({"value":round(data2["data"],0),
-                                "topic":data2["topic"]})
+    # @mqtt.on_message()
+    # @mqtt.on_message()
+   
+    # @mqtt.on_message()
+        # mqtt.publish("/mqtt2","CYVUBHYNJK")
+        await websocket.accept()
+        # mqtt.publish("/mqtt2","CYVUBHYNJK") 
+        #   stop = (await websocket.receive_json())["stop"] #important to await the right thing () otherwise we get error "TypeError: 'coroutine' object is not subscriptable"
+        while True:
+            # await mqtt.publish("/mqtt2","INNANFÖ") 
+        
+            data = publish()
+            data2 = publish2()
+            data3 = publish3()
 
-    data3 = publish3()
-    # data2 = publish()
-    # for data in health_data_db.each():
-    await websocket.send_json({"value":round(data3["data"],0),
-                                "topic":data3["topic"]})
+            # mqtt.loop_forever()
+           
+            @mqtt.on_message()
+            async def message(client, topic, payload, qos, properties):
+                print("Received message: ",topic, payload.decode(), qos, properties)
+                print(round(int(float(payload.decode()))))
 
-    # 
-    #     print(data.val())
-    #     await websocket.send_json({"value":data.val()})
-    time.sleep(1)
+                if topic == '/mqtt':
+                    await websocket.send_json({"value":round(int(float(payload.decode())),0),
+                                    "topic":topic})
+                # if topic == '/mqtt2':
+                #     await websocket.send_json({"value":round(data2["data"],0),
+                #                             "topic":data2["topic"]})
+                # if topic == '/mqtt3':
+                #     await websocket.send_json({"value":round(data3["data"],0),
+                #                             "topic":data3["topic"]})
+
+                
+            #     print(data.val())
+            #     await websocket.send_json({"value":data.val()})
+            await asyncio.sleep(1)
+            # time.sleep(1)
+            # time.sleep is blocking, you should use asyncio.sleep, 
+            # there's also .gather and .wait to aggregate jobs. This is well documented within Python and FastAPI.
     
 # @app.websocket("/bpm2")
 # async def websocket_endpoint2(websocket2:WebSocket):
@@ -286,5 +298,11 @@ async def websocket_endpoint(websocket:WebSocket):
         #     await asyncio.sleep(1)
         #     payload = next(i)
         #     await websocket.send_json(i)
-
+# Uvicorn is an ASGI web server implementation for Python
     #   # uvicorn python.main:app --reload
+
+    # The command uvicorn main:app refers to:
+
+# main: the file main.py (the Python "module").
+# app: the object created inside of main.py with the line app = FastAPI().
+# --reload: make the server restart after code changes. Only use for development.
