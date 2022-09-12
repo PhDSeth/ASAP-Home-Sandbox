@@ -1,6 +1,6 @@
 <template>
-  <div class="body">
-    <div class="sensors">
+  <div class="body" style="padding:3rem">
+    <div class="sensors" style="margin-top:2rem;">
       <div>
         <v-alert
           id="alertMessage"
@@ -10,180 +10,219 @@
           transition="scale-transition"
           prominent
           type="warning"
-          style="width: 80%; color: red"
+          style="width: 80%; color: red;margin-left:2.5rem;"
         >
           <h3 style="margin-left: 5rem; color: red">
-            Fall detected {{ fallTime }}
+            Larm, klockan:{{ fallTime }}
           </h3>
           <v-btn
             color="rgb(93, 200, 118)"
-            @click="alert = !alert"
-            style="margin-left: 4rem"
+            @click="alertFunc"
+            style="margin-left: 4rem; margin-top:0.5rem"
           >
-            I have been notified
+            Hantera
           </v-btn>
         </v-alert>
-
-        <div
-          class="patient-info"
-          style="margin-top: 2rem; margin-bottom: 2rem; width: 30%"
-        >
-          <h3 style="text-align: center; margin-bottom: 0.5rem">
-            Patient info
-          </h3>
-          <h3>Name: Test Testsson</h3>
-          <h3>Age: 86</h3>
-          {{mobileData}}
-        </div>
-
-        <div>
-          <div style="display: flex; flex-direction: row">
-            <div>
-              <h3 v-if="parseInt(BPM_data) < 100" style="color: green">
-                Heart rate data: {{ BPM_data }} beats per minute
-              </h3>
-              <h3 v-else style="color: red">
-                Heart rate data: {{ BPM_data }} beats per minute
-              </h3>
-              <button
-                v-if="toggledBPM == false"
-                v-on:click="BPM"
-                style="
-                  margin-top: 0.5rem;
-                  border: solid;
-                  border-width: 3px;
-                  border-radius: 3px;
-                  background-color: rgb(93, 200, 118);
-                "
-              >
-                Collect data
-              </button>
-              <button
-                v-else
-                v-on:click="BPM"
-                style="
-                  margin-top: 0.5rem;
-                  border: solid;
-                  border-width: 3px;
-                  border-radius: 3px;
-                  background-color: rgb(93, 200, 118);
-                "
-              >
-                Collecting...
-              </button>
-              <button
-                v-on:click="stopBPM"
-                style="
-                  margin-top: 0.5rem;
-                  border: solid;
-                  border-width: 3px;
-                  border-radius: 3px;
-                  background-color: rgb(225, 90, 90);
-                "
-              >
-                Stop collecting
-              </button>
+          <div class="start-collecting" >
+            <h2 style="text-align: center; margin-bottom: -1rem">
+                Patientinformation
+              </h2>
+            <div
+              class="patient-info"
+              style="margin-left:2rem;margin-top: 2rem; margin-bottom: 2rem; background-color: white; padding:0.5rem; width:20vw; border-radius: 0.5rem;"
+            >
+              <h3>Namn: Test Testsson</h3>
+              <h3>Pers. nr: 19400101-0007</h3>
+              <h3>Ålder: 86</h3>
+              <h3>Id: 25633</h3>
             </div>
-            <div>
-              <client-only>
-                <div id="chart">
-                  <component
-                    :is="apexchart"
-                    height="250"
-                    width="500"
-                    type="area"
-                    :options="options"
-                    :series="series"
-                  />
-                </div>
-              </client-only>
-            </div>
+            <h2 style="margin-bottom:0.5rem;">Uppkopplade sensorer:</h2>
+            <div style="background-color: white; padding:0.5rem; width:20vw; border-radius: 0.5rem;margin-left:2rem">
+            <h3 v-if="parseInt(BPM_data) < 100" style="color: green">
+              Hjärtfrekvens: {{ BPM_data }} slag per minut
+            </h3>
+            <h3 v-else style="color: red">
+              Hjärtfrekvens: {{ BPM_data }} slag per minut
+            </h3>
+            <h3 v-if="parseInt(blood_pressure_data) < 10" style="color: green">
+              Blodtryck: {{ blood_pressure_data }}/{{
+                blood_pressure_data
+              }}
+              mmHg
+            </h3>
+            <h3 v-else style="color: red">
+              Blodtryck: {{ blood_pressure_data }}/{{
+                blood_pressure_data
+              }}
+              mmHg
+            </h3>
+
+            <h3 v-if="parseInt(acceleration_data) < 16" style="color: green">
+              Acceleration: {{ acceleration_data }} m/s<sup>2</sup>
+            </h3>
+            <h3 v-else style="color: red">
+              Acceleration: {{ acceleration_data }} m/s<sup>2</sup>
+            </h3>
+            <button
+              v-if="toggledBPM == false"
+              v-on:click="BPM"
+              style="
+                margin-top: 0.5rem;
+                border: solid;
+                border-width: 3px;
+                border-radius: 3px;
+                background-color: rgb(93, 200, 118);
+              "
+            >
+              Collect data
+            </button>
+            <button
+              v-else
+              v-on:click="BPM"
+              style="
+                margin-top: 0.5rem;
+                border: solid;
+                border-width: 3px;
+                border-radius: 3px;
+                background-color: rgb(93, 200, 118);
+              "
+            >
+              Collecting...
+            </button>
+            <button
+              v-on:click="stopBPM"
+              style="
+                margin-top: 0.5rem;
+                border: solid;
+                border-width: 3px;
+                border-radius: 3px;
+                background-color: rgb(225, 90, 90);
+              "
+            >
+              Stop collecting
+            </button>
           </div>
 
-          <div style="display: flex; flex-direction: row">
-            <div style="margin-top: 2rem">
-              <h3
-                v-if="parseInt(blood_pressure_data) < 10"
-                style="color: green"
-              >
-                Blood pressure data: {{ blood_pressure_data }}/{{
-                  blood_pressure_data
-                }}
-                mmHg
-              </h3>
-              <h3 v-else style="color: red">
-                Blood pressure data: {{ blood_pressure_data }}/{{
-                  blood_pressure_data
-                }}
-                mmHg
-              </h3>
-              <!-- <button v-if="toggledPressure == false" v-on:click="bloodPressure" style="margin-top:0.5rem; border:solid;border-width: 3px; border-radius: 3px;  background-color:rgb(93, 200, 118);"  >Collect data</button>
+            
+
+            <div style="width:20vw; margin-left:2rem;margin-top:1.5rem" v-if="fallDetected==true">
+              <h2 style="text-align:center">Journal</h2>
+            <v-expansion-panels focusable multiple>
+              <v-expansion-panel>
+                <v-expansion-panel-header >Diagnoser</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header style="border:solid; border-color:#e31c1d">Läkemedel</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>Remisser</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header style="border:solid; border-color:#e31c1d">Provsvar</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>Vaccinationer</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>Vårdplan</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>Uppmärksamhetsinformation</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </div>
+        
+          </div>
+
+        </div>
+        <!-- <div style="display: flex; flex-direction: row; left: 0"> -->
+          <!-- <div style="margin-top: 2rem"> -->
+
+          <!-- <button v-if="toggledPressure == false" v-on:click="bloodPressure" style="margin-top:0.5rem; border:solid;border-width: 3px; border-radius: 3px;  background-color:rgb(93, 200, 118);"  >Collect data</button>
              <button v-else v-on:click="bloodPressure" style="margin-top:0.5rem; border:solid;border-width: 3px; border-radius: 3px; background-color:rgb(93, 200, 118);">Collecting...</button>
              <button  v-on:click="stopPressure" style="margin-top:0.5rem; border:solid;border-width: 3px; border-radius: 3px; background-color:rgb(225, 90, 90);">Stop collecting</button> -->
-            </div>
+          <!-- </div> -->
+        <!-- </div> -->
+      
 
-            <div>
-              <client-only>
-                <div id="chart">
-                  <component
-                    :is="apexchart"
-                    height="250"
-                    width="500"
-                    type="area"
-                    :options="options1"
-                    :series="series1"
-                  />
-                </div>
-              </client-only>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style="display: flex; flex-direction: row">
-        <div style="margin-top: 2rem">
-        <h3 v-if="parseInt(acceleration_data) < 16" style="color: green">
-          Acceleration: {{ acceleration_data }} m/s<sup>2</sup>
-        </h3>
-        <h3 v-else style="color: red">
-          Acceleration: {{ acceleration_data }} m/s<sup>2</sup>
-        </h3>
-        </div>
+      <!-- <div style="display: flex; flex-direction: row"> -->
         <!-- <button v-if="toggledAcceleration == false" v-on:click="acceleration" style="margin-top:0.5rem; border:solid;border-width: 3px; border-radius: 3px;  background-color:rgb(93, 200, 118);"  >Collect data</button>
              <button v-else v-on:click="acceleration" style="margin-top:0.5rem; border:solid;border-width: 3px; border-radius: 3px; background-color:rgb(93, 200, 118);">Collecting...</button>
              <button  v-on:click="stopAcceleration" style="margin-top:0.5rem; border:solid;border-width: 3px; border-radius: 3px; background-color:rgb(225, 90, 90);">Stop collecting</button> -->
-      
-                  <div>
-              <client-only>
-                <div id="chart" style="margin-left:5rem">
-                  <component
-                    :is="apexchart"
-                    height="250"
-                    width="500"
-                    type="area"
-                    :options="options2"
-                    :series="series2"
-                  />
-                </div>
-              </client-only>
-            </div>
+      <!-- </div> -->
+    </div>
+    <div
+        style="position:absolute; grid-column-start: 3; grid-column-end:4; height:100%; width:95%;display:flex; flex-direction: column; justify-content: space-evenly;"
+          >
+            <client-only>
+              <div id="chart">
+                <component
+                  :is="apexchart"
+                  height="230"
+                  width=500
+                  type="area"
+                  :options="options1"
+                  :series="series1"
+                  style="background-color:white; border-radius: 0.5rem;margin-top:1rem;margin-top:0.7rem;"
+                />
+              </div>
+            </client-only>
+            <client-only>
+              <component
+                :is="apexchart"
+                height="240"
+                width="500"
+                type="area"
+                :options="options2"
+                :series="series2"
+                style="background-color:white; border-radius: 0.5rem;margin-top:1rem;"
+              />
+            </client-only>
+            <client-only>
+              <div id="chart">
+                <component
+                  :is="apexchart"
+                  height="240"
+                  width="500"
+                  type="area"
+                  :options="options"
+                  :series="series"
+                  style="background-color:white; border-radius: 0.5rem;margin-top:1rem;"
+                />
+              </div>
+            </client-only>
           </div>
 
-      <div class="additionaInfo" style="">
-        <!-- <div id="chart">
-        <apexchart type="line" height="350" ref="chart" :series="series"></apexchart>
-      </div> -->
-      </div>
-    </div>
-
-    <div class="map-falls">
+    <div class="map-falls" style=" display: flex; justify-content: center; align-items: flex-start; height:97vh; border-radius: 0.3rem;">
       <client-only>
         <l-map
-          :zoom="7"
+          :zoom="10"
           :minZoom="3"
           :maxZoom="14"
-          :center="[58.70887, 13.97456]"
+          :center="[57.708870, 11.974560]"
           :attributionControl="true"
+          style="width:100%; height:80%" 
         >
           <l-tile-layer
             url="https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png"
@@ -191,23 +230,28 @@
 
           <div v-for="item in items.length" :key="item">
             <l-marker :lat-lng="items[item - 1]">
-              <l-icon
+              <l-icon v-if="items[item-1].includes(57.908870)"
                 :icon-size="50"
                 :icon-anchor="dynamicAnchor"
                 icon-url="https://www.freeiconspng.com/uploads/-human-male-man-people-person-profile-red-user-icon--icon--23.png"
               />
-              <l-popup style="color: blue">
+              <l-icon v-else
+                :icon-size="50"
+                :icon-anchor="dynamicAnchor"
+                icon-url="https://www.freeiconspng.com/uploads/ambulance-transportation-png-28.png"
+              />
+              <l-popup style="color: black" v-if="items[item-1].includes(57.908870)">
+                
                 <span>Patient: Test Testsson</span>
-                <br />
+                <span>Ålder: 86</span>
                 <span>Id: 25633</span>
                 <br />
                 <span>Olyckan inträffa klockan:{{ fallTime }}</span>
-                <br />
-                <span>Koordinater: [Lat: 58.708870, Long:13.974560]</span>
-                <br />
+                <br/>
                 <span>Olyckstyp: Fall från stol</span>
                 <br />
-                <span>Adress: Stigvägen 3</span>
+                <span>Adress: Stigvägen 3, 455 56 Kollande, Ale Kommun</span>
+                <span>Koordinater: [Long: 57.70887, Lat: 11.974560]</span>
                 <br />
                 <span>Telefon: 0782263733</span>
                 <br />
@@ -217,8 +261,15 @@
                 <br />
                 <span>Portkod: 2345 </span>
                 <br />
-                <span>Medicins info: </span>
+                <div><button style="border:solid; border-color:black">Exportera</button><button style="border:solid; border-color:black">Dir</button></div>
+             
+              </l-popup>
+              <l-popup style="color: black" v-else>
+                
+                <span>Ambulans: 23412B</span>
                 <br />
+                <span>Prio: 2B</span>
+
               </l-popup>
             </l-marker>
             -->
@@ -228,7 +279,16 @@
                 <l-popup style="color:blue" ><span></span></l-popup></l-marker> -->
         </l-map>
       </client-only>
+      <div v-if="fallDetected== true" style="background-color:white; text-align:left; padding-left:3rem;margin-top:79vh;position:absolute; grid-column-start: 3;grid-column-end: 4;width: 100%; height:14%; border-radius: 0.5rem; border:solid; border-color: red;">
+        <h3>Antal tillgängliga ambulanser: 2</h3>
+        <br/>
+        <h3>Allvarlighetsgrad: <span style="color:red">Hög (prio 1A)</span></h3>
+        <br/>
+        <h3 >Osäkerhet: <span style="color:blue">Låg</span></h3>
+       
+       
     </div>
+      </div>
 
     <!-- <h3>{{$nuxt.$fire.auth.currentUser.email}}</h3> -->
   </div>
@@ -237,8 +297,7 @@
 
 <script>
 import { Line } from "vue-chartjs";
-import mqtt from 'mqtt'
-
+import mqtt from "mqtt";
 
 export default {
   computed: {
@@ -253,11 +312,11 @@ export default {
 
   data() {
     return {
-      items: [],
+      items: [[57.838870, 12.174560],[57.708870, 12.074560]],
       // items:[[57.708870,11.974560],[55.9464418,8.1277591],[58.9464418,8.1277591]],
       alert: true,
       BPM_data: "0",
-      mobileData:"0",
+      mobileData: "0",
       pressure_data: "0",
       blood_pressure_data: "0",
       acceleration_data: "0",
@@ -291,12 +350,12 @@ export default {
         chart: {
           colors: ["#77B6EA"],
           fill: {
-          colors: ["#5091c7",],
-        },
+            colors: ["#5091c7"],
+          },
           id: "vuechart-example",
         },
         title: {
-          text: "Average High & Low Temperature", //https://apexcharts.com/vue-chart-demos/line-charts/data-labels/
+          text: "Hjärtfrekvens [BPM]", //https://apexcharts.com/vue-chart-demos/line-charts/data-labels/
           align: "middle",
         },
         xaxis: {
@@ -312,10 +371,10 @@ export default {
         },
         colors: ["#FF94F8"],
         fill: {
-          colors: ["#DB82D6",],
+          colors: ["#DB82D6"],
         },
         title: {
-          text: "Average High & Low Temperature", //https://apexcharts.com/vue-chart-demos/line-charts/data-labels/
+          text: "Blodtryck [mmHg]", //https://apexcharts.com/vue-chart-demos/line-charts/data-labels/
           align: "middle",
         },
         xaxis: {
@@ -334,7 +393,7 @@ export default {
           colors: ["#18E38A"],
         },
         title: {
-          text: "Average High & Low Temperature", //https://apexcharts.com/vue-chart-demos/line-charts/data-labels/
+          text: "Acceleration [m/s^2]", //https://apexcharts.com/vue-chart-demos/line-charts/data-labels/
           align: "middle",
         },
         xaxis: {
@@ -346,13 +405,13 @@ export default {
       },
       series: [
         {
-          name: "Heart Rate [BPM]",
+          name: "Hjärtfrekvens [BPM]",
           data: [],
         },
       ],
       series1: [
         {
-          name: "Blood pressure [mmHg]",
+          name: "Blodtryck [mmHg]",
           data: [],
         },
       ],
@@ -362,8 +421,6 @@ export default {
           data: [],
         },
       ],
-
-     
 
       // series: [{
       //   name: 'Heart Rate [BPM]',
@@ -403,15 +460,17 @@ export default {
         this.today.getSeconds();
 
       if (val == true) {
-        this.items = [[58.70887, 13.97456]];
+        this.items.push([57.908870, 12.074560]);
         this.fallTime = this.time;
       }
     },
   },
 
   methods: {
-
-    createChart() {},
+    alertFunc() {
+      console.log("ALTER");
+      this.fallDetected = false;
+    },
 
     isOpen() {
       return this.connection.readyState === this.connection.OPEN;
@@ -445,7 +504,6 @@ export default {
     },
 
     BPM() {
-    
       if (this.toggledBPM == true) {
         //if the button gets untoggled
         this.toggledBPM = false;
@@ -462,12 +520,6 @@ export default {
       this.connection.onmessage = (event) => {
         // https://github.com/apexcharts/vue-apexcharts
         // console.log(event)
-        console.log(JSON.parse(event.data)["topic"])
-        console.log(JSON.parse(event.data)["value"])
-        if (JSON.parse(event.data)["topic"] == "testseth") {
-          console.log("FRÅN MOBIL")
-          a.mobileData = JSON.parse(event.data)["value"];
-        }
         if (JSON.parse(event.data)["topic"] == "/mqtt") {
           a.today = new Date();
 
@@ -514,32 +566,33 @@ export default {
           // ]
 
           // && a.blood_pressure_data > 10 && a.acceleration_data > 17
-          if (a.BPM_data > 120 &&
-            a.blood_pressure_data > 9 &&
-            a.acceleration_data > 15) {
+          if (a.BPM_data > 300) {
+            // if (a.BPM_data > 120 &&
+            //   a.blood_pressure_data > 9 &&
+            //   a.acceleration_data > 15) {
             a.fallDetected = true;
             a.options = {
-            ...a.options,
-            ...{
-              colors:["#FF0000"]
-            },
-          };
+              ...a.options,
+              ...{
+                colors: ["#FF0000"],
+              },
+            };
             a.options1 = {
-            ...a.options1,
-            ...{
-              colors:["#FF0000"]
-            },
-          };
+              ...a.options1,
+              ...{
+                colors: ["#FF0000"],
+              },
+            };
             a.options2 = {
-            ...a.options2,
-            ...{
-              colors:["#FF0000"]
-            },
-          };
+              ...a.options2,
+              ...{
+                colors: ["#FF0000"],
+              },
+            };
           }
         }
         // else if(JSON.parse(event.data)["topic"] == "mqtt2" && this.bb == true){
-        else if (JSON.parse(event.data)["topic"] == "mqtt2") {
+        else if (JSON.parse(event.data)["topic"] == "/mqtt2") {
           a.blood_pressure_data = JSON.parse(event.data)["value"];
 
           a.today1 = new Date();
@@ -580,35 +633,36 @@ export default {
             },
           ];
 
-          if (
-            a.BPM_data > 120 &&
-            a.blood_pressure_data > 9 &&
-            a.acceleration_data > 15
-          ) {
+          // if (
+          //   a.BPM_data > 120 &&
+          //   a.blood_pressure_data > 9 &&
+          //   a.acceleration_data > 15
+          // ) {
+          if (a.BPM_data > 300) {
             a.fallDetected = true;
             a.options = {
-            ...a.options,
-            ...{
-              colors:["#FF0000"]
-            },
-          };
+              ...a.options,
+              ...{
+                colors: ["#FF0000"],
+              },
+            };
             a.options1 = {
-            ...a.options1,
-            ...{
-              colors:["#FF0000"]
-            },
-          };
+              ...a.options1,
+              ...{
+                colors: ["#FF0000"],
+              },
+            };
             a.options2 = {
-            ...a.options2,
-            ...{
-              colors:["#FF0000"]
-            },
-          };
+              ...a.options2,
+              ...{
+                colors: ["#FF0000"],
+              },
+            };
           }
         }
 
         // else if(JSON.parse(event.data)["topic"] == "mqtt3" && this.cc == true){
-        else if (JSON.parse(event.data)["topic"] == "mqtt3") {
+        else if (JSON.parse(event.data)["topic"] == "/mqtt3") {
           a.acceleration_data = JSON.parse(event.data)["value"];
 
           a.today2 = new Date();
@@ -647,32 +701,31 @@ export default {
             },
           ];
 
-          if (
-            a.BPM_data > 120 &&
-            a.blood_pressure_data > 9 &&
-            a.acceleration_data > 15
-          ) {
+          // if (
+          //   a.BPM_data > 120 &&
+          //   a.blood_pressure_data > 9 &&
+          //   a.acceleration_data > 15
+          // ) {
+          if (a.BPM_data > 300) {
             a.fallDetected = true;
             a.options = {
-            ...a.options,
-            ...{
-              colors:["#FF0000"]
-            },
-          };
+              ...a.options,
+              ...{
+                colors: ["#FF0000"],
+              },
+            };
             a.options1 = {
-            ...a.options1,
-            ...{
-              colors:["#FF0000"]
-            },
-          };
+              ...a.options1,
+              ...{
+                colors: ["#FF0000"],
+              },
+            };
             a.options2 = {
-            ...a.options2,
-            ...{
-              colors:["#FF0000"]
-            },
-          };
-           
-            
+              ...a.options2,
+              ...{
+                colors: ["#FF0000"],
+              },
+            };
           }
         }
       };
@@ -888,37 +941,35 @@ font-family: 'Rubik Mono One', sans-serif; */
   position: absolute;
   width: 100vw;
   height: 100vh;
+  margin-left:-17rem;
+  margin-top:-1rem;
+  background-color:#ecedef;
   display: grid;
-  grid-template-columns: 1fr 0.5fr 0.3fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
 }
 
-.sensors {
-  grid-column-start: 1;
-  grid-column-start: 1;
+// .sensors {
+//   grid-column-start: 0;
+//   grid-column-start: 1;
+// }
+
+.sensors{
+  grid-column-start: 2;
+  text-align:center;
 }
 
-.additionaInfo {
-  grid-column-start: 1;
-  grid-column-start: 1;
-  grid-row-start: 2;
-  grid-row-start: 3;
-  // background-color: rgb(183, 199, 236);
-  height: 70%;
-  width: 95%;
-  margin-top: 1rem;
-  border-radius: 1rem;
-}
+
 
 .map-falls {
   // background-color: blue;
-  height: 95%;
 
-  grid-column-start: 2;
-  grid-column-end: 3;
+  width:100%;
+  grid-column-start: 4;
+  grid-column-end: 5;
   grid-row-start: 1;
-  grid-row-end: 4;
-  margin-right: -7rem;
+  grid-row-end: 1;
+  // margin-right: 7rem;
 }
 
 #alertMessage {
