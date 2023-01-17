@@ -1,4 +1,6 @@
 # core
+<!-- NODE VERSION 16 --> 
+<!-- NPM VERSION 8.14.0 --> 
 
 ## Build Setup
 
